@@ -6,10 +6,8 @@
 > - Quick Start clone URL
 > - Any other links to Actions
 
-#### Badges (template users: replace OWNER/REPO)
+#### Badges
 [![CI](https://github.com/OWNER/REPO/actions/workflows/cmake-multi-platform.yml/badge.svg?branch=main)](https://github.com/OWNER/REPO/actions/workflows/cmake-multi-platform.yml)
-
-
 [![CMake](https://github.com/d3m1d0s/OpenGLTemplate/actions/workflows/cmake-multi-platform.yml/badge.svg?branch=main)](https://github.com/d3m1d0s/OpenGLTemplate/actions/workflows/cmake-multi-platform.yml)
 ![C++20](https://img.shields.io/badge/C%2B%2B-20-blue.svg)
 ![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
