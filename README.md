@@ -23,6 +23,8 @@ Works **out-of-the-box**: uses preinstalled packages (vcpkg/Conan/system) or aut
 - [Dependencies](#-dependencies)
 - [Example Output](#-example-output)
 - [Project Structure](#-project-structure)
+- [License](#-license)
+- [Attribution](#-attribution)
 
 ---
 
