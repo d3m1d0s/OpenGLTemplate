@@ -1,0 +1,17 @@
+* text=auto eol=lf
+
+*.sh  text eol=lf
+*.ps1 text eol=crlf
+*.bat text eol=crlf
+
+*.glsl text eol=lf
+*.vert text eol=lf
+*.frag text eol=lf
+*.hpp  text eol=lf
+*.h    text eol=lf
+*.cpp  text eol=lf
+*.c    text eol=lf
+
+*.png  binary
+*.jpg  binary
+*.jpeg binary
