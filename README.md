@@ -27,7 +27,7 @@ Works **out-of-the-box**: uses preinstalled packages (vcpkg/Conan/system) or aut
 ---
 
 ## Quick Start
-👉 It’s recommended to preinstall [Dependencies](#-dependencies).
+Tip: It’s recommended to preinstall [Dependencies](#-dependencies).
 
 
 ```bash
@@ -45,7 +45,7 @@ cmake --build build
 [JetBrains CLion](https://www.jetbrains.com/clion/) is a great choice for CMake/C++ projects.
 Just open this folder in CLion and it will automatically detect the `CMakeLists.txt` and configure everything.
 
-👉 Tip: if you use **vcpkg** with CLion, set a toolchain file in
+Tip: if you use **vcpkg** with CLion, set a toolchain file in
 `Settings → Build, Execution, Deployment → CMake → CMake options` and pick a proper triplet (e.g. `x64-windows-static`):
 
 ```
