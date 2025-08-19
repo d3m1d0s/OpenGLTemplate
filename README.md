@@ -1,16 +1,15 @@
 # OpenGLTemplate
 
+[![CI](https://github.com/OWNER/REPO/actions/workflows/cmake-multi-platform.yml/badge.svg?branch=main)](https://github.com/OWNER/REPO/actions/workflows/cmake-multi-platform.yml)
+[![CMake](https://github.com/d3m1d0s/OpenGLTemplate/actions/workflows/cmake-multi-platform.yml/badge.svg?branch=main)](https://github.com/d3m1d0s/OpenGLTemplate/actions/workflows/cmake-multi-platform.yml)
+![C++20](https://img.shields.io/badge/C%2B%2B-20-blue.svg)
+![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
+
 > **Using this as a template?**  
 > After clicking **Use this template** (or `gh repo create --template d3m1d0s/OpenGLTemplate`) all occurrences of `OWNER/REPO` will be replaced with `<youruser>/<yourrepo>` automatically in:
 > - CI badge(s)
 > - Quick Start clone URL
 > - Any other links to Actions
-
-#### Badges
-[![CI](https://github.com/OWNER/REPO/actions/workflows/cmake-multi-platform.yml/badge.svg?branch=main)](https://github.com/OWNER/REPO/actions/workflows/cmake-multi-platform.yml)
-[![CMake](https://github.com/d3m1d0s/OpenGLTemplate/actions/workflows/cmake-multi-platform.yml/badge.svg?branch=main)](https://github.com/d3m1d0s/OpenGLTemplate/actions/workflows/cmake-multi-platform.yml)
-![C++20](https://img.shields.io/badge/C%2B%2B-20-blue.svg)
-![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
 
 A modern **C++20 OpenGL starter template** with [GLFW](https://www.glfw.org/) and [GLAD](https://glad.dav1d.de/).
 Works **out-of-the-box**: uses preinstalled packages (vcpkg/Conan/system) or auto-fetches sources via CMake.
