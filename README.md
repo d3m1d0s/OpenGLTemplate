@@ -17,16 +17,16 @@ Works **out-of-the-box**: uses preinstalled packages (vcpkg/Conan/system) or aut
 ---
 
 ## 📑 Table of Contents
-- [🚀 Quick Start](#-quick-start)
-- [💻 Recommended IDE: CLion](#-recommended-ide-clion)
-- [✨ Features](#-features)
-- [📦 Dependencies](#-dependencies)
-- [🖼️ Example Output](#-example-output)
-- [🔧 Project Structure](#-project-structure)
+- [Quick Start](#-quick-start)
+- [Recommended IDE: CLion](#-recommended-ide-clion)
+- [Features](#-features)
+- [Dependencies](#-dependencies)
+- [🖼Example Output](#-example-output)
+- [Project Structure](#-project-structure)
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 👉 It’s recommended to preinstall [Dependencies](#-dependencies).
 
 
@@ -40,7 +40,7 @@ cmake --build build
 
 ---
 
-## 💻 Recommended IDE: CLion
+## Recommended IDE: CLion
 
 [JetBrains CLion](https://www.jetbrains.com/clion/) is a great choice for CMake/C++ projects.
 Just open this folder in CLion and it will automatically detect the `CMakeLists.txt` and configure everything.
@@ -55,7 +55,7 @@ Just open this folder in CLion and it will automatically detect the `CMakeLists.
 
 ---
 
-## ✨ Features
+## Features
 
 * Minimal CMake (>= 3.20), C++20.
 * Cross-platform: Windows, Linux, macOS.
@@ -67,7 +67,7 @@ Just open this folder in CLion and it will automatically detect the `CMakeLists.
 
 ---
 
-## 📦 Dependencies
+## Dependencies
 
 ### Windows (via vcpkg)
 
@@ -102,7 +102,7 @@ Do nothing — CMake auto-fetches **GLFW 3.4** and **GLAD 0.1.36**.
 
 ---
 
-## 🖼️ Example Output
+## Example Output
 
 Opens a **800×600 window**, clears to white, prints OpenGL version, e.g.:
 
@@ -112,7 +112,7 @@ OpenGL: 3.3.0 - Build 31.0.101.2135
 
 ---
 
-## 🔧 Project Structure
+## Project Structure
 
 ```
 OpenGLTemplate/
@@ -128,12 +128,12 @@ OpenGLTemplate/
 > `set(GLAD_API "gl=4.6")`.
 
 ---
-## 📜 License
+## License
 
 This project is licensed under the [MIT License](LICENSE).
 
 ---
-## 🙌 Attribution
+## Attribution
 
 This project was originally generated from [d3m1d0s/OpenGLTemplate](https://github.com/d3m1d0s/OpenGLTemplate) — MIT.
 If you use this as a template, please keep this line or move it to your `NOTICE` file.
