@@ -1,0 +1,10 @@
+# CMake build folders
+cmake-build-*/
+build/
+
+# IDE (CLion/JetBrains)
+.idea/
+
+# OS junk
+.DS_Store
+Thumbs.db
