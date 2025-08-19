@@ -1,6 +1,6 @@
 # OpenGLTemplate
 
-[![CMake](https://github.com/yourusername/OpenGLTemplate/actions/workflows/cmake.yml/badge.svg)](https://github.com/yourusername/OpenGLTemplate/actions)
+[![CMake](https://github.com/d3m1d0s/OpenGLTemplate/actions/workflows/cmake.yml/badge.svg)](https://github.com/d3m1d0s/OpenGLTemplate/actions)
 ![C++20](https://img.shields.io/badge/C%2B%2B-20-blue.svg)
 ![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
 
@@ -24,7 +24,7 @@ Works **out-of-the-box**: uses preinstalled packages (vcpkg/Conan/system) or aut
 
 
 ```bash
-git clone https://github.com/yourusername/OpenGLTemplate.git
+git clone https://github.com/d3m1d0s/OpenGLTemplate.git
 cd OpenGLTemplate
 cmake -B build -S .
 cmake --build build
