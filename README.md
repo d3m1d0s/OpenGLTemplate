@@ -1,5 +1,15 @@
 # OpenGLTemplate
 
+> **Using this as a template?**  
+> After clicking **Use this template** (or `gh repo create --template d3m1d0s/OpenGLTemplate`) all occurrences of `OWNER/REPO` will be replaced with `<youruser>/<yourrepo>` automatically in:
+> - CI badge(s)
+> - Quick Start clone URL
+> - Any other links to Actions
+
+#### Badges (template users: replace OWNER/REPO)
+[![CI](https://github.com/OWNER/REPO/actions/workflows/cmake-multi-platform.yml/badge.svg?branch=main)](https://github.com/OWNER/REPO/actions/workflows/cmake-multi-platform.yml)
+
+
 [![CMake](https://github.com/d3m1d0s/OpenGLTemplate/actions/workflows/cmake-multi-platform.yml/badge.svg?branch=main)](https://github.com/d3m1d0s/OpenGLTemplate/actions/workflows/cmake-multi-platform.yml)
 ![C++20](https://img.shields.io/badge/C%2B%2B-20-blue.svg)
 ![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
@@ -24,7 +34,7 @@ Works **out-of-the-box**: uses preinstalled packages (vcpkg/Conan/system) or aut
 
 
 ```bash
-git clone https://github.com/d3m1d0s/OpenGLTemplate.git
+git clone https://github.com/OWNER/REPO.git
 cd OpenGLTemplate
 cmake -B build -S .
 cmake --build build
@@ -125,3 +135,8 @@ OpenGLTemplate/
 
 This project is licensed under the [MIT License](LICENSE).
 
+---
+## 🙌 Attribution
+
+This project was originally generated from [d3m1d0s/OpenGLTemplate](https://github.com/d3m1d0s/OpenGLTemplate) — MIT.
+If you use this as a template, please keep this line or move it to your `NOTICE` file.
