@@ -1,0 +1,60 @@
+name: Personalize template README/NOTICE
+
+on:
+  push:
+    branches: [ "main" ]   
+  workflow_dispatch: {}     
+
+permissions:
+  contents: write          
+
+jobs:
+  personalize:
+    
+    if: github.repository != 'd3m1d0s/OpenGLTemplate'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compute repo name (owner/repo)
+        id: vars
+        run: echo "repo=${GITHUB_REPOSITORY}" >> "$GITHUB_OUTPUT"
+
+      - name: Replace placeholders in README (do not touch attribution)
+        if: hashFiles('README.md') != ''
+        run: |
+          REPO="${{ steps.vars.outputs.repo }}"
+          sed -i "s|https://github.com/OWNER/REPO.git|https://github.com/${REPO}.git|g" README.md
+          sed -i "s|github.com/OWNER/REPO|github.com/${REPO}|g" README.md
+          sed -i "s|OWNER/REPO|${REPO}|g" README.md
+
+      - name: Ensure NOTICE exists with attribution
+        run: |
+          if [ ! -f NOTICE ]; then
+            cat > NOTICE <<'EOF'
+OpenGLTemplate — NOTICE
+
+This project was generated from d3m1d0s/OpenGLTemplate (MIT).
+Original template: https://github.com/d3m1d0s/OpenGLTemplate
+
+Please keep this NOTICE when redistributing or creating a new template derived from this repository.
+EOF
+          fi
+
+      - name: Ensure attribution block present in README (non-destructive)
+        if: hashFiles('README.md') != ''
+        run: |
+          grep -qi "Originally generated from \[d3m1d0s/OpenGLTemplate" README.md || {
+            cat >> README.md <<'EOF'
+
+---
+
+> Originally generated from [d3m1d0s/OpenGLTemplate](https://github.com/d3m1d0s/OpenGLTemplate).
+EOF
+          }
+
+      - name: Commit personalization changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: personalize README/NOTICE for this repository"
