@@ -24,7 +24,7 @@ Works **out-of-the-box**: uses preinstalled packages (vcpkg/Conan/system) or aut
 
 ## ⚡ Quick Start
 Tip: It’s recommended to preinstall [Dependencies](#-dependencies).
-If something goes wrong — check [Troubleshooting](#-troubleshooting).
+If something goes wrong - check [Troubleshooting](#-troubleshooting).
 
 ```bash
 git clone https://github.com/<youruser>/<yourrepo>.git
@@ -77,7 +77,8 @@ cmake -B build -S . -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.c
 ### 🐧 Linux (system packages)
 
 ```bash
-sudo apt install cmake g++ pkg-config libglfw3-dev libgl1-mesa-dev libglad-dev
+sudo apt install cmake g++ pkg-config libglfw3-dev libgl1-mesa-dev
+sudo apt install libglad-dev    # If glad is not available via your package manager, no worries - this template will fetch it automatically.
 cmake -B build -S .
 cmake --build build
 ```
@@ -85,7 +86,8 @@ cmake --build build
 ### 🍏 macOS (Homebrew)
 
 ```bash
-brew install cmake glfw glad
+brew install cmake glfw
+brew install glad        # If glad is not available via your package manager, no worries - this template will fetch it automatically.
 cmake -B build -S .
 cmake --build build
 ```
@@ -94,7 +96,7 @@ cmake --build build
 
 ### 📦 Self-contained (no pkg manager)
 
-Do nothing — CMake auto-fetches **GLFW 3.4** and **GLAD 0.1.36**.
+Do nothing - CMake auto-fetches **GLFW 3.4** and **GLAD 0.1.36**.
 
 ---
 
