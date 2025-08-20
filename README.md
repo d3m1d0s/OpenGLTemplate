@@ -16,6 +16,7 @@ Works **out-of-the-box**: uses preinstalled packages (vcpkg/Conan/system) or aut
 - [📦 Dependencies](#-dependencies)
 - [🖼️ Example Output](#-example-output)
 - [📂 Project Structure](#-project-structure)
+- [🆘 Troubleshooting](#-troubleshooting)
 - [📜 License](#-license)
 - [🙌 Attribution](#-attribution)
 
@@ -121,6 +122,27 @@ OpenGLTemplate/
 
 > To bump OpenGL version, edit in CMake:
 > `set(GLAD_API "gl=4.6")`.
+
+## 🆘 Troubleshooting
+
+- **Windows: mixing toolchains/triplets**  
+  Errors like `__security_cookie`, `sscanf_s`, or `fprintf` usually mean you’re compiling with **MinGW** but linked **MSVC** vcpkg triplets (or vice versa).  
+  Align them:
+  - MSVC ↔ `x64-windows` / `x64-windows-static`
+  - MinGW-w64 ↔ `x64-mingw-dynamic` / `x64-mingw-static`
+
+- **CMake can’t find `glfw3Config.cmake`**  
+  If using vcpkg, make sure you pass the toolchain file and a triplet:
+  ```bash
+  -DCMAKE_TOOLCHAIN_FILE=<path-to-vcpkg>/scripts/buildsystems/vcpkg.cmake
+  -DVCPKG_TARGET_TRIPLET=x64-windows-static   # or your platform
+
+- **DLLs missing on Windows (dynamic triplets)**
+  Copy runtime DLLs (e.g., `glfw3.dll`) next to your executable or use a static triplet.
+
+- **Linux: missing dev packages**
+  Some distros don’t ship certain OpenGL helpers (e.g., `libglad-dev`).
+  On Ubuntu/Debian, enable `universe` or just skip it — this template will **auto-fetch GLAD** via `FetchContent`.
 
 ---
 ## 📜 License
