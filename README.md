@@ -10,15 +10,15 @@ Works **out-of-the-box**: uses preinstalled packages (vcpkg/Conan/system) or aut
 ---
 
 ## 📚 Table of Contents
-- [⚡ Quick Start](#-quick-start)
-- [💻 Recommended IDE: CLion](#-recommended-ide-clion)
-- [✨ Features](#-features)
-- [📦 Dependencies](#-dependencies)
-- [🖼️ Example Output](#-example-output)
-- [📂 Project Structure](#-project-structure)
-- [🆘 Troubleshooting](#-troubleshooting)
-- [📜 License](#-license)
-- [🙌 Attribution](#-attribution)
+- [⚡ Quick Start](#quick-start)
+- [💻 Recommended IDE: CLion](#recommended-ide-clion)
+- [✨ Features](#features)
+- [📦 Dependencies](#dependencies)
+- [🖼️ Example Output](#example-output)
+- [📂 Project Structure](#project-structure)
+- [🆘 Troubleshooting](#troubleshooting)
+- [📜 License](#license)
+- [🙌 Attribution](#attribution)
 
 ---
 
