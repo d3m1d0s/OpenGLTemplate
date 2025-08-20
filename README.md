@@ -77,7 +77,8 @@ cmake -B build -S . -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.c
 ### 🐧 Linux (system packages)
 
 ```bash
-sudo apt install cmake g++ pkg-config libglfw3-dev libgl1-mesa-dev libglad-dev
+sudo apt install cmake g++ pkg-config libglfw3-dev libgl1-mesa-dev
+sudo apt install libglad-dev    # If glad is not available via your package manager, no worries — this template will fetch it automatically.
 cmake -B build -S .
 cmake --build build
 ```
@@ -85,7 +86,8 @@ cmake --build build
 ### 🍏 macOS (Homebrew)
 
 ```bash
-brew install cmake glfw glad
+brew install cmake glfw
+brew install glad        # If glad is not available via your package manager, no worries — this template will fetch it automatically.
 cmake -B build -S .
 cmake --build build
 ```
