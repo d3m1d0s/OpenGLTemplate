@@ -154,5 +154,5 @@ This project is licensed under the [MIT License](LICENSE).
 ---
 ## 🙌 Attribution
 
-This project was originally generated from [d3m1d0s/OpenGLTemplate](https://github.com/d3m1d0s/OpenGLTemplate) — MIT.
+This project was originally generated from [d3m1d0s/OpenGLTemplate](https://github.com/d3m1d0s/OpenGLTemplate) - MIT.
 If you use this as a template, please keep this line or move it to your `NOTICE` file.
