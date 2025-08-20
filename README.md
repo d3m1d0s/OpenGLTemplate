@@ -24,7 +24,7 @@ Works **out-of-the-box**: uses preinstalled packages (vcpkg/Conan/system) or aut
 
 ## ⚡ Quick Start
 Tip: It’s recommended to preinstall [Dependencies](#-dependencies).
-
+If something goes wrong — check [Troubleshooting](#-troubleshooting).
 
 ```bash
 git clone https://github.com/<youruser>/<yourrepo>.git
