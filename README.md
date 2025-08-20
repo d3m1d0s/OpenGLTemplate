@@ -138,10 +138,10 @@ OpenGLTemplate/
   -DVCPKG_TARGET_TRIPLET=x64-windows-static   # or your platform
 
 - **DLLs missing on Windows (dynamic triplets)**
-  Copy runtime DLLs (e.g., `glfw3.dll`) next to your executable or use a static triplet.
+   Copy runtime DLLs (e.g., `glfw3.dll`) next to your executable or use a static triplet.
 
 - **Linux: missing dev packages**
-  Some distros don’t ship certain OpenGL helpers (e.g., `libglad-dev`).
+   Some distros don’t ship certain OpenGL helpers (e.g., `libglad-dev`).
   On Ubuntu/Debian, enable `universe` or just skip it — this template will **auto-fetch GLAD** via `FetchContent`.
 
 ---
