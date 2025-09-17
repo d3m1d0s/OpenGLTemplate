@@ -7,11 +7,17 @@ set(CMAKE_CXX_STANDARD 20)
 # Look for a system/OpenGL SDK and create the imported target OpenGL::GL.
 find_package(OpenGL REQUIRED)
 
-# Try to find preinstalled packages first (works with vcpkg, Conan, system installs).
-# The "CONFIG" mode searches for package config files (glfw3Config.cmake, gladConfig.cmake).
+# -----------------------------
+# 0) Options (On/Off add. libs)
+# -----------------------------
+option(ENABLE_ASSIMP      "Enable Assimp (model loading)"          ON)
+option(ENABLE_OPENCV      "Enable OpenCV (images/video)"           ON)
+option(ENABLE_ANTTWEAKBAR "Enable AntTweakBar (debug UI sliders)"  ON)
+
+# ---- Try preinstalled packages (vcpkg/Conan/system) ----
 find_package(glfw3 CONFIG QUIET)
 find_package(glad  CONFIG QUIET)
-
+find_package(glm   CONFIG QUIET)
 
 # Fallback path: if a package is missing, fetch its sources and build it as part of this project.
 # This keeps the project self-contained and avoids requiring users to install dependencies manually.
@@ -40,43 +46,143 @@ if (NOT glad_FOUND)
             GIT_REPOSITORY https://github.com/Dav1dde/glad.git
             GIT_TAG v0.1.36
     )
-    # Configure the generated loader:
-    # - Use the "core" profile to access modern OpenGL without deprecated functions.
-    # - Request OpenGL 3.3; raise this (e.g., "gl=4.6") if your hardware/drivers allow.
-    set(GLAD_PROFILE "core" CACHE STRING "" FORCE)
-    set(GLAD_API     "gl=3.3" CACHE STRING "" FORCE)
+    #  for legacy-examples - compatability
+    set(GLAD_PROFILE "compatibility" CACHE STRING "" FORCE)
+    set(GLAD_API     "gl=3.3"         CACHE STRING "" FORCE)
     FetchContent_MakeAvailable(glad)
 endif()
 
-# Normalize target names so the rest of the CMakeLists can link the same variables
-# regardless of whether the libs came from a package manager or from sources.
-if (TARGET glfw)        # when built from sources
+if (NOT glm_FOUND)
+    include(FetchContent)
+    FetchContent_Declare(glm
+            GIT_REPOSITORY https://github.com/g-truc/glm.git
+            GIT_TAG 1.0.1
+    )
+    FetchContent_MakeAvailable(glm)
+endif()
+
+# -------- Assimp (fallback) --------
+if (ENABLE_ASSIMP)
+    find_package(assimp CONFIG QUIET)
+    if (NOT assimp_FOUND)
+        include(FetchContent)
+        FetchContent_Declare(assimp
+                GIT_REPOSITORY https://github.com/assimp/assimp.git
+                GIT_TAG v5.4.3
+        )
+        # Disable treating warnings as errors (important for MinGW/GCC builds).
+        set(ASSIMP_WARNINGS_AS_ERRORS OFF CACHE BOOL "" FORCE)
+        set(ENABLE_WARNINGS_AS_ERRORS OFF CACHE BOOL "" FORCE)
+
+        # Trim down the build to speed it up
+        set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+        set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE BOOL "" FORCE)
+        set(ASSIMP_NO_EXPORT ON CACHE BOOL "" FORCE)
+
+        # Optional: restrict importers to specific formats (e.g. FBX/OBJ only).
+        # set(ASSIMP_BUILD_ALL_IMPORTERS_BY_DEFAULT OFF CACHE BOOL "" FORCE)
+        # set(ASSIMP_BUILD_FBX_IMPORTER ON CACHE BOOL "" FORCE)
+        # set(ASSIMP_BUILD_OBJ_IMPORTER ON CACHE BOOL "" FORCE)
+
+        FetchContent_MakeAvailable(assimp)
+
+        # After the 'assimp' target is available, silence problematic warnings
+        # under GCC/Clang (MSVC-specific pragmas etc.).
+        if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang" AND TARGET assimp)
+            target_compile_options(assimp PRIVATE -Wno-unknown-pragmas -Wno-error)
+        endif()
+    endif()
+endif()
+
+
+# -------- OpenCV (optional) --------
+if (ENABLE_OPENCV)
+    # In vcpkg target usually is OpenCV::opencv or set of modules (opencv_core, ...)
+    find_package(OpenCV CONFIG QUIET)
+    if (OpenCV_FOUND)
+        if (TARGET OpenCV::opencv)
+            set(OPENCV_TARGETS OpenCV::opencv)
+        elseif (DEFINED OpenCV_LIBS)
+            set(OPENCV_TARGETS ${OpenCV_LIBS})
+        elseif (DEFINED OpenCV_LIBRARIES)
+            set(OPENCV_TARGETS ${OpenCV_LIBRARIES})
+        endif()
+    endif()
+endif()
+
+# -------- AntTweakBar (optional) --------
+if (ENABLE_ANTTWEAKBAR)
+    find_package(AntTweakBar CONFIG QUIET) # vcpkg: anttweakbar
+    if (TARGET AntTweakBar::AntTweakBar)
+        set(ATB_TARGET AntTweakBar::AntTweakBar)
+    elseif (TARGET AntTweakBar)
+        set(ATB_TARGET AntTweakBar)
+    endif()
+endif()
+
+# ---- Normalize target names ----
+# GLFW
+if (TARGET glfw)
     set(GLFW_TARGET glfw)
-elseif (TARGET glfw::glfw)  # when found via package (e.g., vcpkg)
+elseif (TARGET glfw::glfw)
     set(GLFW_TARGET glfw::glfw)
 else()
     message(FATAL_ERROR "GLFW target not found")
 endif()
 
-if (TARGET glad)        # when built from sources
+# GLAD
+if (TARGET glad)
     set(GLAD_TARGET glad)
-elseif (TARGET glad::glad)  # when found via package (e.g., vcpkg)
+elseif (TARGET glad::glad)
     set(GLAD_TARGET glad::glad)
 else()
     message(FATAL_ERROR "GLAD target not found")
 endif()
 
-# Your application target. Add more source files here as your project grows.
+# GLM (header-only)
+if (TARGET glm::glm)
+    set(GLM_TARGET glm::glm)
+elseif (TARGET glm)
+    set(GLM_TARGET glm)
+else()
+    message(FATAL_ERROR "GLM target not found")
+endif()
+
+# Assimp (optional)
+if (ENABLE_ASSIMP)
+    if (TARGET assimp::assimp)
+        set(ASSIMP_TARGET assimp::assimp)
+    elseif (TARGET assimp)
+        set(ASSIMP_TARGET assimp)
+    endif()
+endif()
+
+# ---- App target ----
 add_executable(OpenGLTemplate src/main.cpp)
 
-# Link against:
-# - OpenGL::GL: the system OpenGL implementation
-# - ${GLFW_TARGET}: window/context/input handling
-# - ${GLAD_TARGET}: function loader for the requested OpenGL version/profile
 target_link_libraries(OpenGLTemplate PRIVATE
         OpenGL::GL
         ${GLFW_TARGET}
         ${GLAD_TARGET}
+        ${GLM_TARGET}
 )
 
+# Link optional libs if found
+if (ASSIMP_TARGET)
+    target_link_libraries(OpenGLTemplate PRIVATE ${ASSIMP_TARGET})
+    target_compile_definitions(OpenGLTemplate PRIVATE USE_ASSIMP=1)
+endif()
 
+if (OPENCV_TARGETS)
+    target_link_libraries(OpenGLTemplate PRIVATE ${OPENCV_TARGETS})
+    # If not imported target, then adding include-directories
+    if (DEFINED OpenCV_INCLUDE_DIRS AND NOT TARGET OpenCV::opencv)
+        target_include_directories(OpenGLTemplate PRIVATE ${OpenCV_INCLUDE_DIRS})
+    endif()
+    target_compile_definitions(OpenGLTemplate PRIVATE USE_OPENCV=1)
+endif()
+
+if (ATB_TARGET)
+    target_link_libraries(OpenGLTemplate PRIVATE ${ATB_TARGET})
+    target_compile_definitions(OpenGLTemplate PRIVATE USE_ANTTWEAKBAR=1)
+endif()
