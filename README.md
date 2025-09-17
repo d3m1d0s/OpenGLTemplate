@@ -44,8 +44,8 @@ Just open this folder in CLion and it will automatically detect the `CMakeLists.
 Tip: if you use **vcpkg** with CLion, set a toolchain file in
 `Settings → Build, Execution, Deployment → CMake → CMake options` and pick a proper triplet (e.g. `x64-windows-static`):
 
-```
--DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake 
+```bash
+-DCMAKE_TOOLCHAIN_FILE=C:/<path-to-vcpkg>/scripts/buildsystems/vcpkg.cmake 
 -DVCPKG_TARGET_TRIPLET=x64-windows-static
 ```
 
@@ -154,5 +154,5 @@ This project is licensed under the [MIT License](LICENSE).
 ---
 ## 🙌 Attribution
 
-This project was originally generated from [d3m1d0s/OpenGLTemplate](https://github.com/d3m1d0s/OpenGLTemplate) — MIT.
+This project was originally generated from [d3m1d0s/OpenGLTemplate](https://github.com/d3m1d0s/OpenGLTemplate) - MIT.
 If you use this as a template, please keep this line or move it to your `NOTICE` file.
