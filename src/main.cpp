@@ -11,9 +11,8 @@ static void key_callback(GLFWwindow* win, int key, int, int action, int){
 
 int main(){
 #if defined(__linux__) && defined(GLFW_PLATFORM)
-    // Prefer X11 (XWayland on Wayland desktops): distro GLEW is usually built
-    // for GLX and glewInit() can fail on a native Wayland/EGL context.
-    // Remove this hint if you build an EGL-flavored GLEW for native Wayland.
+    // Distro GLEW is usually built for GLX and fails to initialize on a native
+    // Wayland session, so X11 (XWayland on Wayland desktops) is requested instead.
     glfwInitHint(GLFW_PLATFORM, GLFW_PLATFORM_X11);
 #endif
     if(!glfwInit()){ std::cerr<<"GLFW init failed\n"; return -1; }
@@ -21,7 +20,7 @@ int main(){
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR,3);
     glfwWindowHint(GLFW_OPENGL_PROFILE,GLFW_OPENGL_CORE_PROFILE);
 #ifdef __APPLE__
-    // macOS refuses to create a 3.x core-profile context without this.
+    // Required on macOS to create a core-profile context.
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT,GLFW_TRUE);
 #endif
 
@@ -33,7 +32,6 @@ int main(){
     glfwSetKeyCallback(win, key_callback);
 
     // glewInit must run after a GL context is current.
-    glewExperimental = GL_TRUE;
     if(GLenum err = glewInit(); err != GLEW_OK){
         std::cerr<<"glewInit failed: "<<glewGetErrorString(err)<<"\n";
         glfwTerminate();

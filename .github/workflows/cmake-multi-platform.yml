@@ -12,9 +12,8 @@ jobs:
 
     strategy:
       fail-fast: false
-      # Two Linux legs on purpose: "system" consumes distro packages through
-      # find_package, "fetchcontent" builds every dependency from the pinned
-      # archives, so both resolution paths stay tested.
+      # The two Linux jobs differ on purpose: "system" uses distro packages
+      # through find_package, "fetchcontent" builds the pinned archives.
       matrix:
         include:
           - os: ubuntu-latest
