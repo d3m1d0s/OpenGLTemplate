@@ -1,8 +1,11 @@
-cmake_minimum_required(VERSION 3.20)
-project(OpenGLTemplate LANGUAGES C CXX)
+# 3.21 is needed for the $<TARGET_RUNTIME_DLLS> generator expression below.
+cmake_minimum_required(VERSION 3.21)
+project(OpenGLTemplate VERSION 1.0.0 LANGUAGES C CXX)
 
 # Use C++20 features in this project (GLFW/GLEW themselves are C, but this project is C++).
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Look for a system/OpenGL SDK and create the imported target OpenGL::GL.
 find_package(OpenGL REQUIRED)
@@ -212,6 +215,21 @@ endif()
 # ---- App target ----
 add_executable(OpenGLTemplate src/main.cpp)
 
+target_include_directories(OpenGLTemplate PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+
+# Compile-time absolute paths to the source-tree asset folders. Loading
+# "shaders/x.vert" relative to the working directory breaks as soon as the
+# app is launched from an IDE or another folder; these macros do not.
+target_compile_definitions(OpenGLTemplate PRIVATE
+        SHADERS_DIR="${CMAKE_CURRENT_SOURCE_DIR}/shaders"
+        ASSETS_DIR="${CMAKE_CURRENT_SOURCE_DIR}/assets"
+)
+
+target_compile_options(OpenGLTemplate PRIVATE
+        $<$<CXX_COMPILER_ID:MSVC>:/W4>
+        $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall;-Wextra>
+)
+
 target_link_libraries(OpenGLTemplate PRIVATE
         OpenGL::GL
         ${GLFW_TARGET}
@@ -239,4 +257,13 @@ endif()
 if (ATB_TARGET)
     target_link_libraries(OpenGLTemplate PRIVATE ${ATB_TARGET})
     target_compile_definitions(OpenGLTemplate PRIVATE USE_ANTTWEAKBAR=1)
+endif()
+
+# Copy runtime DLLs (e.g. a shared system GLEW) next to the executable so it
+# runs straight from the build tree. The $<IF:...> guard is needed because
+# copy_if_different errors out when the DLL list is empty (all-static builds).
+if (WIN32)
+    add_custom_command(TARGET OpenGLTemplate POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E $<IF:$<BOOL:$<TARGET_RUNTIME_DLLS:OpenGLTemplate>>,copy_if_different,true> $<TARGET_RUNTIME_DLLS:OpenGLTemplate> $<TARGET_FILE_DIR:OpenGLTemplate>
+            COMMAND_EXPAND_LISTS)
 endif()
