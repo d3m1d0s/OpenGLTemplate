@@ -10,9 +10,9 @@ find_package(OpenGL REQUIRED)
 # -----------------------------
 # 0) Options (On/Off add. libs)
 # -----------------------------
-option(ENABLE_ASSIMP      "Enable Assimp (model loading)"          ON)
-option(ENABLE_OPENCV      "Enable OpenCV (images/video)"           ON)
-option(ENABLE_ANTTWEAKBAR "Enable AntTweakBar (debug UI sliders)"  ON)
+option(ENABLE_ASSIMP      "Enable Assimp (model loading)"          OFF)
+option(ENABLE_OPENCV      "Enable OpenCV (images/video)"           OFF)
+option(ENABLE_ANTTWEAKBAR "Enable AntTweakBar (debug UI sliders)"  OFF)
 
 # ---- Try preinstalled packages (vcpkg/Conan/system) ----
 find_package(glfw3 CONFIG QUIET)
@@ -27,12 +27,16 @@ find_package(tinyobjloader CONFIG QUIET)
 # This keeps the project self-contained and avoids requiring users to install dependencies manually.
 
 # --- GLFW fallback (FetchContent) ---
-if (NOT glfw3_FOUND)
+# Probes check targets rather than <pkg>_FOUND so every config-package flavor
+# and the fallback end up on the same code path.
+if (NOT TARGET glfw AND NOT TARGET glfw::glfw)
     include(FetchContent)
-    # Pin to a known GLFW release; adjust GIT_TAG when you want to upgrade.
+    message(STATUS "glfw3 not found - fetching GLFW 3.4")
+    # Release archives instead of git clones: identical pinned content, faster
+    # to download and verifiable by hash.
     FetchContent_Declare(glfw
-            GIT_REPOSITORY https://github.com/glfw/glfw.git
-            GIT_TAG 3.4
+            URL      https://github.com/glfw/glfw/releases/download/3.4/glfw-3.4.zip
+            URL_HASH SHA256=b5ec004b2712fd08e8861dc271428f048775200a2df719ccf575143ba749a3e9
     )
     # Build only the library; skip extras to speed up configure/build times.
     set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
@@ -45,6 +49,7 @@ endif()
 # --- GLEW fallback (FetchContent) ---
 if (NOT GLEW_FOUND)
     include(FetchContent)
+    message(STATUS "GLEW not found - fetching GLEW 2.2.0")
     # The release tarball is required here: GLEW's git repository does not contain
     # the generated glew.c/glew.h sources, they are only shipped in release archives.
     # GLEW's CMake project lives in build/cmake, hence SOURCE_SUBDIR.
@@ -69,11 +74,12 @@ if (NOT GLEW_FOUND)
     target_include_directories(glew_s PUBLIC $<BUILD_INTERFACE:${glew_SOURCE_DIR}/include>)
 endif()
 
-if (NOT glm_FOUND)
+if (NOT TARGET glm::glm AND NOT TARGET glm)
     include(FetchContent)
+    message(STATUS "glm not found - fetching GLM 1.0.1")
     FetchContent_Declare(glm
-            GIT_REPOSITORY https://github.com/g-truc/glm.git
-            GIT_TAG 1.0.1
+            URL      https://github.com/g-truc/glm/archive/refs/tags/1.0.1.zip
+            URL_HASH SHA256=09c5716296787e1f7fcb87b1cbdbf26814ec1288ed6259ccd30d5d9795809fa5
     )
     FetchContent_MakeAvailable(glm)
 endif()
@@ -83,6 +89,7 @@ endif()
 # config package (vcpkg, apt) and the fallback end up on the same code path.
 if (NOT TARGET tinyobjloader::tinyobjloader)
     include(FetchContent)
+    message(STATUS "tinyobjloader not found - fetching v2.0.0rc13")
     FetchContent_Declare(tinyobjloader
             URL      https://github.com/tinyobjloader/tinyobjloader/archive/refs/tags/v2.0.0rc13.tar.gz
             URL_HASH SHA256=0feb92b838f8ce4aa6eb0ccc32dff30cb64a891e0ec3bde837fca49c78d44334
@@ -108,6 +115,7 @@ if (ENABLE_ASSIMP)
     find_package(assimp CONFIG QUIET)
     if (NOT assimp_FOUND)
         include(FetchContent)
+        message(STATUS "assimp not found - fetching Assimp v5.4.3")
         FetchContent_Declare(assimp
                 GIT_REPOSITORY https://github.com/assimp/assimp.git
                 GIT_TAG v5.4.3
@@ -149,6 +157,8 @@ if (ENABLE_OPENCV)
         elseif (DEFINED OpenCV_LIBRARIES)
             set(OPENCV_TARGETS ${OpenCV_LIBRARIES})
         endif()
+    else()
+        message(WARNING "ENABLE_OPENCV is ON but OpenCV was not found; building without it")
     endif()
 endif()
 
@@ -159,6 +169,8 @@ if (ENABLE_ANTTWEAKBAR)
         set(ATB_TARGET AntTweakBar::AntTweakBar)
     elseif (TARGET AntTweakBar)
         set(ATB_TARGET AntTweakBar)
+    else()
+        message(WARNING "ENABLE_ANTTWEAKBAR is ON but AntTweakBar was not found; building without it")
     endif()
 endif()
 
