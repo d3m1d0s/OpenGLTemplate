@@ -1,0 +1,24 @@
+{
+  "name": "opengl-template",
+  "version": "1.0.0",
+  "dependencies": [
+    "glfw3",
+    "glew",
+    "glm",
+    "tinyobjloader"
+  ],
+  "features": {
+    "assimp": {
+      "description": "Model loading via Assimp (pair with -DENABLE_ASSIMP=ON)",
+      "dependencies": [ "assimp" ]
+    },
+    "opencv": {
+      "description": "Image and video processing via OpenCV (pair with -DENABLE_OPENCV=ON)",
+      "dependencies": [ "opencv" ]
+    },
+    "anttweakbar": {
+      "description": "Debug UI sliders via AntTweakBar (pair with -DENABLE_ANTTWEAKBAR=ON)",
+      "dependencies": [ "anttweakbar" ]
+    }
+  }
+}
