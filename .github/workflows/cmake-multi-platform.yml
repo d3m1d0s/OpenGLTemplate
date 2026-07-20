@@ -12,8 +12,10 @@ jobs:
 
     strategy:
       fail-fast: false
-      # The two Linux jobs differ on purpose: "system" uses distro packages
-      # through find_package, "fetchcontent" builds the pinned archives.
+      # The jobs differ on purpose: "system" uses distro packages through
+      # find_package, "fetchcontent" builds the pinned archives, and the
+      # "-extras" jobs additionally enable the optional Assimp and OpenCV
+      # (on Windows OpenCV comes from the official prebuilt release).
       matrix:
         include:
           - os: ubuntu-latest
@@ -21,6 +23,12 @@ jobs:
             cpp_compiler: g++
             deps: system
             build_type: Release
+          - os: ubuntu-latest
+            c_compiler: gcc
+            cpp_compiler: g++
+            deps: system-extras
+            build_type: Release
+            options: -DENABLE_ASSIMP=ON -DENABLE_OPENCV=ON
           - os: ubuntu-latest
             c_compiler: clang
             cpp_compiler: clang++
@@ -31,11 +39,23 @@ jobs:
             cpp_compiler: cl
             deps: fetchcontent
             build_type: Release
+          - os: windows-latest
+            c_compiler: cl
+            cpp_compiler: cl
+            deps: fetchcontent-extras
+            build_type: Release
+            options: -DENABLE_ASSIMP=ON -DENABLE_OPENCV=ON
           - os: macos-latest
             c_compiler: clang
             cpp_compiler: clang++
             deps: system
             build_type: Release
+          - os: macos-latest
+            c_compiler: clang
+            cpp_compiler: clang++
+            deps: system-extras
+            build_type: Release
+            options: -DENABLE_ASSIMP=ON -DENABLE_OPENCV=ON
 
     steps:
       - uses: actions/checkout@v4
@@ -47,6 +67,14 @@ jobs:
           sudo apt-get install -y \
             libglew-dev libglfw3-dev libglm-dev libtinyobjloader-dev
 
+      - name: Install system packages with optional libraries (Linux)
+        if: runner.os == 'Linux' && matrix.deps == 'system-extras'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libglew-dev libglfw3-dev libglm-dev libtinyobjloader-dev \
+            libassimp-dev libopencv-dev
+
       - name: Install build prerequisites (Linux, FetchContent)
         if: runner.os == 'Linux' && matrix.deps == 'fetchcontent'
         run: |
@@ -56,10 +84,25 @@ jobs:
             libwayland-dev wayland-protocols libxkbcommon-dev
 
       - name: Install system packages (macOS)
-        if: runner.os == 'macOS'
+        if: runner.os == 'macOS' && matrix.deps == 'system'
         run: |
           brew update
           brew install glfw glew glm
+
+      - name: Install system packages with optional libraries (macOS)
+        if: runner.os == 'macOS' && matrix.deps == 'system-extras'
+        run: |
+          brew update
+          brew install glfw glew glm assimp opencv
+
+      - name: Install prebuilt OpenCV (Windows)
+        if: runner.os == 'Windows' && matrix.deps == 'fetchcontent-extras'
+        shell: pwsh
+        run: |
+          curl.exe -L -o opencv-installer.exe https://github.com/opencv/opencv/releases/download/4.12.0/opencv-4.12.0-windows.exe
+          7z x opencv-installer.exe -oopencv-prebuilt -y | Out-Null
+          "OpenCV_DIR=$env:GITHUB_WORKSPACE\opencv-prebuilt\opencv\build" >> $env:GITHUB_ENV
+          "CMAKE_PREFIX_PATH=$env:GITHUB_WORKSPACE\opencv-prebuilt\opencv\build" >> $env:GITHUB_ENV
 
       - name: Set reusable strings
         id: strings
@@ -79,6 +122,7 @@ jobs:
           -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
           -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
           -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+          ${{ matrix.options }}
           -S ${{ github.workspace }}
 
       - name: Build

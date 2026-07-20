@@ -2,6 +2,12 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+#ifdef USE_ASSIMP
+#include <assimp/version.h>
+#endif
+#ifdef USE_OPENCV
+#include <opencv2/core/utility.hpp>
+#endif
 
 static void framebuffer_size_callback(GLFWwindow*, int w, int h){ glViewport(0,0,w,h); }
 
@@ -40,6 +46,12 @@ int main(){
     std::cout<<"OpenGL:   "<<glGetString(GL_VERSION)<<"\n";
     std::cout<<"Renderer: "<<glGetString(GL_RENDERER)<<"\n";
     std::cout<<"GLEW:     "<<glewGetString(GLEW_VERSION)<<std::endl;
+#ifdef USE_ASSIMP
+    std::cout<<"Assimp:   "<<aiGetVersionMajor()<<"."<<aiGetVersionMinor()<<"."<<aiGetVersionPatch()<<std::endl;
+#endif
+#ifdef USE_OPENCV
+    std::cout<<"OpenCV:   "<<cv::getVersionString()<<std::endl;
+#endif
 
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     while(!glfwWindowShouldClose(win)){
