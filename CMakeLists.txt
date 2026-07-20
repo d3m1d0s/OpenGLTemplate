@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 project(OpenGLTemplate LANGUAGES C CXX)
 
-# Use C++20 features in this project (GLFW/GLAD themselves are C, but this project is C++).
+# Use C++20 features in this project (GLFW/GLEW themselves are C, but this project is C++).
 set(CMAKE_CXX_STANDARD 20)
 
 # Look for a system/OpenGL SDK and create the imported target OpenGL::GL.
@@ -16,7 +16,10 @@ option(ENABLE_ANTTWEAKBAR "Enable AntTweakBar (debug UI sliders)"  ON)
 
 # ---- Try preinstalled packages (vcpkg/Conan/system) ----
 find_package(glfw3 CONFIG QUIET)
-find_package(glad  CONFIG QUIET)
+# GLEW is searched in module mode on purpose: the module tries CONFIG first
+# (vcpkg/brew/Conan) and then falls back to a plain library search, which also
+# covers installs that ship no CMake config file (e.g. apt's libglew-dev).
+find_package(GLEW QUIET)
 find_package(glm   CONFIG QUIET)
 
 # Fallback path: if a package is missing, fetch its sources and build it as part of this project.
@@ -38,18 +41,31 @@ if (NOT glfw3_FOUND)
     FetchContent_MakeAvailable(glfw)
 endif()
 
-# --- GLAD fallback (FetchContent) ---
-if (NOT glad_FOUND)
+# --- GLEW fallback (FetchContent) ---
+if (NOT GLEW_FOUND)
     include(FetchContent)
-    # Pin to a GLAD release; GLAD's CMake can generate the loader at build time.
-    FetchContent_Declare(glad
-            GIT_REPOSITORY https://github.com/Dav1dde/glad.git
-            GIT_TAG v0.1.36
+    # The release tarball is required here: GLEW's git repository does not contain
+    # the generated glew.c/glew.h sources, they are only shipped in release archives.
+    # GLEW's CMake project lives in build/cmake, hence SOURCE_SUBDIR.
+    FetchContent_Declare(glew
+            URL      https://github.com/nigels-com/glew/releases/download/glew-2.2.0/glew-2.2.0.tgz
+            URL_HASH SHA256=d4fc82893cfb00109578d0a1a2337fb8ca335b3ceccf97b97e5cc7f08e4353e1
+            SOURCE_SUBDIR build/cmake
     )
-    #  for legacy-examples - compatability
-    set(GLAD_PROFILE "compatibility" CACHE STRING "" FORCE)
-    set(GLAD_API     "gl=3.3"         CACHE STRING "" FORCE)
-    FetchContent_MakeAvailable(glad)
+    # Build only the static library; skip the glewinfo/visualinfo tools.
+    set(BUILD_UTILS OFF CACHE BOOL "" FORCE)
+    set(BUILD_SHARED_LIBS OFF)
+    # GLEW 2.2.0 declares an older cmake_minimum_required than CMake 4.x accepts.
+    set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
+    FetchContent_MakeAvailable(glew)
+    unset(CMAKE_POLICY_VERSION_MINIMUM)
+    if (NOT TARGET GLEW::GLEW)
+        # glew_s already propagates GLEW_STATIC to consumers.
+        add_library(GLEW::GLEW ALIAS glew_s)
+    endif()
+    # The tarball build is used in place (never installed), so its headers
+    # have to be exposed to consumers explicitly.
+    target_include_directories(glew_s PUBLIC $<BUILD_INTERFACE:${glew_SOURCE_DIR}/include>)
 endif()
 
 if (NOT glm_FOUND)
@@ -130,13 +146,11 @@ else()
     message(FATAL_ERROR "GLFW target not found")
 endif()
 
-# GLAD
-if (TARGET glad)
-    set(GLAD_TARGET glad)
-elseif (TARGET glad::glad)
-    set(GLAD_TARGET glad::glad)
+# GLEW (both the find module and the fallback provide GLEW::GLEW)
+if (TARGET GLEW::GLEW)
+    set(GLEW_TARGET GLEW::GLEW)
 else()
-    message(FATAL_ERROR "GLAD target not found")
+    message(FATAL_ERROR "GLEW target not found")
 endif()
 
 # GLM (header-only)
@@ -163,7 +177,7 @@ add_executable(OpenGLTemplate src/main.cpp)
 target_link_libraries(OpenGLTemplate PRIVATE
         OpenGL::GL
         ${GLFW_TARGET}
-        ${GLAD_TARGET}
+        ${GLEW_TARGET}
         ${GLM_TARGET}
 )
 

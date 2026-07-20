@@ -1,5 +1,5 @@
 #define GLFW_INCLUDE_NONE
-#include <glad/glad.h>
+#include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
 
@@ -11,13 +11,16 @@ int main(){
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR,3);
     glfwWindowHint(GLFW_OPENGL_PROFILE,GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow* win = glfwCreateWindow(800,600,"GLFW+GLAD",nullptr,nullptr);
+    GLFWwindow* win = glfwCreateWindow(800,600,"GLFW+GLEW",nullptr,nullptr);
     if(!win){ std::cerr<<"CreateWindow failed\n"; glfwTerminate(); return -1; }
     glfwMakeContextCurrent(win);
     glfwSetFramebufferSizeCallback(win, framebuffer_size_callback);
 
-    if(!gladLoadGL()){
-        std::cerr<<"gladLoadGL failed\n";
+    // glewInit must run after a GL context is current.
+    glewExperimental = GL_TRUE;
+    if(GLenum err = glewInit(); err != GLEW_OK){
+        std::cerr<<"glewInit failed: "<<glewGetErrorString(err)<<"\n";
+        glfwTerminate();
         return -1;
     }
     std::cout<<"OpenGL: "<<glGetString(GL_VERSION)<<"\n";
