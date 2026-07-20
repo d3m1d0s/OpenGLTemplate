@@ -64,9 +64,12 @@ and picks the presets up by itself.
 
 ## Dependencies
 
-Nothing has to be preinstalled: whatever is missing gets downloaded at
-configure time. System packages only speed configure up and let the
-project link against shared system libraries.
+Beyond CMake and a C++20 compiler, nothing has to be preinstalled: whatever
+library is missing gets downloaded at configure time (on Linux the
+from-source fallback additionally needs the development packages listed
+below). System packages only speed the build up and let the project link
+GLFW, GLEW and tinyobjloader as shared system libraries; GLM is header-only
+either way.
 
 ### Windows
 
@@ -84,7 +87,7 @@ When configuring vcpkg manually (for example in the CLion CMake options),
 pass the toolchain file and a triplet matching the compiler:
 
 ```
--DCMAKE_TOOLCHAIN_FILE=%VCPKG_ROOT%/scripts/buildsystems/vcpkg.cmake
+-DCMAKE_TOOLCHAIN_FILE=<path-to-vcpkg>/scripts/buildsystems/vcpkg.cmake
 -DVCPKG_TARGET_TRIPLET=x64-windows
 ```
 
@@ -96,8 +99,8 @@ System packages on Debian and Ubuntu:
 sudo apt install cmake g++ libglew-dev libglfw3-dev libglm-dev libtinyobjloader-dev
 ```
 
-Without them GLFW and GLEW are built from source, which needs the X11 and
-Wayland development packages:
+Without them GLFW and GLEW are built from source, which needs the OpenGL,
+X11 and Wayland development packages:
 
 ```
 sudo apt install cmake g++ xorg-dev libglu1-mesa-dev libwayland-dev wayland-protocols libxkbcommon-dev
@@ -116,7 +119,8 @@ macOS is capped at version 4.1.
 
 ### Shaders and assets
 
-`shaders/` and `assets/` are empty and reserved for your files. The build
+`shaders/` and `assets/` hold only `.gitkeep` placeholders and are reserved
+for your files. The build
 defines `SHADERS_DIR` and `ASSETS_DIR` with absolute paths to them, so
 files load regardless of where the executable is started from:
 
@@ -126,11 +130,13 @@ std::string vert = std::string(SHADERS_DIR) + "/basic.vert";
 
 ### Images and models
 
-stb_image and tinyobjloader are already compiled into the project. Include
-`<stb_image.h>` or `<tiny_obj_loader.h>` and use them. Never define
-`STB_IMAGE_IMPLEMENTATION` or `TINYOBJLOADER_IMPLEMENTATION` yourself.
-Both are already compiled, and a second definition breaks linking with
-duplicate symbols.
+stb_image is compiled into the project, and tinyobjloader is linked in as
+well, either as a prebuilt package when one is found or built from the
+fetched sources otherwise. Include `<stb_image.h>` or `<tiny_obj_loader.h>`
+and use them. Never define `STB_IMAGE_IMPLEMENTATION` or
+`TINYOBJLOADER_IMPLEMENTATION` yourself. Both are already compiled, and
+defining the macros again in your own files risks duplicate-symbol linker
+errors.
 
 ### Optional libraries
 
