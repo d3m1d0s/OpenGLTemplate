@@ -15,7 +15,6 @@
 - [Project Structure](#project-structure)
 - [Troubleshooting](#troubleshooting)
 - [License](#license)
-- [Attribution](#attribution)
 
 ## Overview
 
@@ -27,22 +26,33 @@ of the box on Windows, Linux and macOS.
 
 ## Build and Run
 
-To create your own project from the template, use the "Use this template"
-button on GitHub. To try it directly, ensure CMake 3.21 or newer and a
-C++20 compiler are installed and run:
+To start your own project, click "Use this template" on GitHub and clone
+the repository it creates:
+
+```
+git clone https://github.com/<user>/<your-new-repo>.git
+```
+
+To try the template as is, clone this repository instead:
 
 ```
 git clone https://github.com/d3m1d0s/OpenGLTemplate.git
-cd OpenGLTemplate
+```
+
+Either way, ensure CMake 3.21 or newer and a C++20 compiler are installed
+and build inside the cloned folder:
+
+```
 cmake --preset default
 cmake --build --preset default
 ./build/OpenGLTemplate
 ```
 
-On Windows the executable is `build\OpenGLTemplate.exe`. The classic
-`cmake -B build -S .` works as well if presets are not wanted. The project
-can also be opened directly in CLion, which is free for non-commercial use
-and picks the presets up by itself.
+On Windows the executable is `build\OpenGLTemplate.exe`, and the classic
+`cmake -B build -S .` works as well if presets are not wanted.
+
+The project can also be opened directly in CLion, which is free for
+non-commercial use and picks the presets up by itself.
 
 ## Features
 
@@ -51,9 +61,7 @@ and picks the presets up by itself.
 - Dependencies are searched with `find_package` first. Anything missing is
   downloaded as a release archive pinned by SHA256 and built statically as
   part of the project.
-- GLFW 3.4 for the window and input, GLEW 2.2.0 as the OpenGL loader,
-  GLM 1.0.1 for math, tinyobjloader for OBJ models and a vendored
-  stb_image for textures.
+- GLFW, GLEW, GLM, tinyobjloader and stb_image wired in and ready to use.
 - Optional Assimp and OpenCV, both off by default.
 - CMake presets for the self-contained and the vcpkg workflows, plus a
   vcpkg manifest.
@@ -64,12 +72,28 @@ and picks the presets up by itself.
 
 ## Dependencies
 
-Beyond CMake and a C++20 compiler, nothing has to be preinstalled: whatever
-library is missing gets downloaded at configure time (on Linux the
-from-source fallback additionally needs the development packages listed
-below). System packages only speed the build up and let the project link
-GLFW, GLEW and tinyobjloader as shared system libraries; GLM is header-only
-either way.
+Beyond CMake and a C++20 compiler, nothing has to be preinstalled: every
+library below is searched on the system first and downloaded at configure
+time when missing (the Linux from-source fallback additionally needs the
+development packages listed further down). Installing libraries system-wide
+only speeds the build up and lets the project link GLFW, GLEW and
+tinyobjloader as shared system libraries; GLM is header-only either way.
+Each library has one job:
+
+- [GLFW](https://www.glfw.org/) 3.4 - opens the window, creates the OpenGL
+  context and handles keyboard and mouse input
+- [GLEW](https://glew.sourceforge.net/) 2.2.0 - loads the OpenGL function
+  pointers at runtime, which portable code cannot rely on the system to export
+- [GLM](https://github.com/g-truc/glm) 1.0.1 - vectors, matrices and the
+  math behind transforms and cameras
+- [tinyobjloader](https://github.com/tinyobjloader/tinyobjloader) - reads
+  OBJ models with their MTL materials
+- [Assimp](https://assimp.org/) - optional alternative to tinyobjloader
+  that reads many more model formats, off by default
+- [stb_image](https://github.com/nothings/stb) - reads PNG, JPEG and other
+  image formats for textures, vendored in `third_party/stb`
+- [OpenCV](https://opencv.org/) - optional alternative to stb_image that
+  also processes images and video, off by default
 
 ### Windows
 
@@ -206,12 +230,5 @@ vcpkg.json
 
 ## License
 
-This project is authored by Demid Ostiakov and licensed under the
-[MIT License](LICENSE).
-
-## Attribution
-
-This project was originally generated from
-[d3m1d0s/OpenGLTemplate](https://github.com/d3m1d0s/OpenGLTemplate) (MIT).
-If you use it as a template, please keep this line or move it to your
-`NOTICE` file.
+Distributed under the MIT License. See [LICENSE](LICENSE) for more
+information. Attribution is appreciated.
