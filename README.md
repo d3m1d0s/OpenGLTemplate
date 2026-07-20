@@ -10,11 +10,19 @@
 - [Build and Run](#build-and-run)
 - [Features](#features)
 - [Dependencies](#dependencies)
+  - [Windows](#windows)
+  - [Linux](#linux)
+  - [macOS](#macos)
 - [Using the Template](#using-the-template)
+  - [Shaders and assets](#shaders-and-assets)
+  - [Images and models](#images-and-models)
+  - [Optional libraries](#optional-libraries)
+  - [OpenGL version](#opengl-version)
 - [Example Output](#example-output)
 - [Project Structure](#project-structure)
 - [Troubleshooting](#troubleshooting)
 - [License](#license)
+- [Acknowledgments](#acknowledgments)
 
 ## Overview
 
@@ -107,12 +115,30 @@ cmake --preset vcpkg
 cmake --build --preset vcpkg
 ```
 
+The optional libraries install through the same manifest as features,
+for example Assimp:
+
+```
+cmake --preset vcpkg -DENABLE_ASSIMP=ON -DVCPKG_MANIFEST_FEATURES=assimp
+```
+
 When configuring vcpkg manually (for example in the CLion CMake options),
 pass the toolchain file and a triplet matching the compiler:
 
 ```
 -DCMAKE_TOOLCHAIN_FILE=<path-to-vcpkg>/scripts/buildsystems/vcpkg.cmake
 -DVCPKG_TARGET_TRIPLET=x64-windows
+```
+
+Installing OpenCV through vcpkg builds it and its dependency chain from
+source, which takes a long time. The faster route on Windows is the
+official prebuilt release: download `opencv-<version>-windows.exe` from
+the [OpenCV releases](https://github.com/opencv/opencv/releases) page
+and run it; the file is a self-extracting archive that asks for a
+destination folder. Then point the build at the unpacked tree:
+
+```
+cmake --preset default -DENABLE_OPENCV=ON -DOpenCV_DIR=<path>/opencv/build
 ```
 
 ### Linux
@@ -130,14 +156,27 @@ X11 and Wayland development packages:
 sudo apt install cmake g++ xorg-dev libglu1-mesa-dev libwayland-dev wayland-protocols libxkbcommon-dev
 ```
 
+For the optional Assimp and OpenCV:
+
+```
+sudo apt install libassimp-dev libopencv-dev
+```
+
 ### macOS
 
 ```
 brew install cmake glfw glew glm
 ```
 
-Homebrew has no tinyobjloader formula; the fallback covers it. OpenGL on
-macOS is capped at version 4.1.
+Homebrew has no tinyobjloader formula; the fallback covers it.
+
+For the optional Assimp and OpenCV:
+
+```
+brew install assimp opencv
+```
+
+OpenGL on macOS is capped at version 4.1.
 
 ## Using the Template
 
@@ -164,23 +203,25 @@ errors.
 
 ### Optional libraries
 
-Assimp and OpenCV are wired in but disabled. Enable them at configure
-time:
+Assimp and OpenCV are wired in but disabled. Enable either one at
+configure time, and gate the code that uses it with the matching
+`USE_ASSIMP` or `USE_OPENCV` definition:
 
 ```
-cmake --preset default -DENABLE_ASSIMP=ON
+cmake --preset default -DENABLE_ASSIMP=ON -DENABLE_OPENCV=ON
 ```
 
-With the vcpkg preset, also activate the matching manifest feature:
+Assimp behaves like the core dependencies: when no installed copy is
+found, the pinned sources are downloaded and built as part of the
+project. That build spends most of its time on the format importers, and
+the commented block in `CMakeLists.txt` shows how to keep only the
+formats you need.
 
-```
-cmake --preset vcpkg -DENABLE_ASSIMP=ON -DVCPKG_MANIFEST_FEATURES=assimp
-```
-
-When Assimp is built from source, most of the work goes into its format
-importers. The commented block in `CMakeLists.txt` shows how to keep only
-the formats you need. Sources with optional code can check the
-`USE_ASSIMP` and `USE_OPENCV` definitions.
+OpenCV is the one dependency without a download fallback, so it has to
+be installed first; the commands for every system are in
+[Dependencies](#dependencies). When the installed OpenCV is a shared
+library, the template copies its DLL next to the executable on Windows
+automatically.
 
 ### OpenGL version
 
@@ -197,6 +238,9 @@ OpenGL:   3.3.0 - Build 31.0.101.2140
 Renderer: Intel(R) HD Graphics 620
 GLEW:     2.2.0
 ```
+
+With the optional libraries enabled, the demo also prints their
+versions.
 
 ## Project Structure
 
@@ -232,3 +276,9 @@ vcpkg.json
 
 Distributed under the MIT License. See [LICENSE](LICENSE) for more
 information. Attribution is appreciated.
+
+## Acknowledgments
+
+The vendored `stb_image.h` comes from Sean Barrett's
+[stb](https://github.com/nothings/stb) libraries, dual-licensed MIT and
+public domain.
