@@ -21,6 +21,7 @@ find_package(glfw3 CONFIG QUIET)
 # covers installs that ship no CMake config file (e.g. apt's libglew-dev).
 find_package(GLEW QUIET)
 find_package(glm   CONFIG QUIET)
+find_package(tinyobjloader CONFIG QUIET)
 
 # Fallback path: if a package is missing, fetch its sources and build it as part of this project.
 # This keeps the project self-contained and avoids requiring users to install dependencies manually.
@@ -75,6 +76,21 @@ if (NOT glm_FOUND)
             GIT_TAG 1.0.1
     )
     FetchContent_MakeAvailable(glm)
+endif()
+
+# --- tinyobjloader fallback (FetchContent) ---
+# The probe checks the target rather than tinyobjloader_FOUND so that any
+# config package (vcpkg, apt) and the fallback end up on the same code path.
+if (NOT TARGET tinyobjloader::tinyobjloader)
+    include(FetchContent)
+    FetchContent_Declare(tinyobjloader
+            URL      https://github.com/tinyobjloader/tinyobjloader/archive/refs/tags/v2.0.0rc13.tar.gz
+            URL_HASH SHA256=0feb92b838f8ce4aa6eb0ccc32dff30cb64a891e0ec3bde837fca49c78d44334
+    )
+    FetchContent_MakeAvailable(tinyobjloader)
+    # Upstream's build tree only creates the plain target; the namespaced name
+    # otherwise exists only in installed packages, so normalize it here.
+    add_library(tinyobjloader::tinyobjloader ALIAS tinyobjloader)
 endif()
 
 # -------- Assimp (fallback) --------
@@ -179,6 +195,7 @@ target_link_libraries(OpenGLTemplate PRIVATE
         ${GLFW_TARGET}
         ${GLEW_TARGET}
         ${GLM_TARGET}
+        tinyobjloader::tinyobjloader
 )
 
 # Link optional libs if found
