@@ -1,9 +1,21 @@
 # CMake build folders
 cmake-build-*/
 build/
+build-*/
+out/
+
+# vcpkg manifest mode
+vcpkg_installed/
+
+# User-local CMake presets
+CMakeUserPresets.json
 
 # IDE (CLion/JetBrains)
 .idea/
+
+# IDE (Visual Studio / VS Code)
+.vs/
+.vscode/
 
 # OS junk
 .DS_Store
