@@ -93,6 +93,16 @@ if (NOT TARGET tinyobjloader::tinyobjloader)
     add_library(tinyobjloader::tinyobjloader ALIAS tinyobjloader)
 endif()
 
+# --- stb_image (vendored) ---
+# Vendored on purpose, without a package probe: package managers disagree on stb
+# (vcpkg exports no CMake target, apt puts headers under an stb/ prefix), so the
+# committed header is the only layout that behaves identically everywhere.
+# The implementation lives in its own translation unit, which also keeps users
+# from ever hitting the duplicate STB_IMAGE_IMPLEMENTATION link error.
+add_library(stb_image STATIC third_party/stb/stb_image_impl.c)
+target_include_directories(stb_image SYSTEM PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/third_party/stb)
+add_library(stb::image ALIAS stb_image)
+
 # -------- Assimp (fallback) --------
 if (ENABLE_ASSIMP)
     find_package(assimp CONFIG QUIET)
@@ -196,6 +206,7 @@ target_link_libraries(OpenGLTemplate PRIVATE
         ${GLEW_TARGET}
         ${GLM_TARGET}
         tinyobjloader::tinyobjloader
+        stb::image
 )
 
 # Link optional libs if found
