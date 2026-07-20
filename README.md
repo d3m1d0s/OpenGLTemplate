@@ -85,7 +85,7 @@ library below is searched on the system first and downloaded at configure
 time when missing (the Linux from-source fallback additionally needs the
 development packages listed further down). Installing libraries system-wide
 only speeds the build up and lets the project link GLFW, GLEW and
-tinyobjloader as shared system libraries; GLM is header-only either way.
+tinyobjloader as shared system libraries. GLM is header-only either way.
 Each library has one job:
 
 - [GLFW](https://www.glfw.org/) 3.4 - opens the window, creates the OpenGL
@@ -107,7 +107,7 @@ Each library has one job:
 
 CMake plus Visual Studio or MinGW is enough for the self-contained build.
 To use vcpkg instead, set the `VCPKG_ROOT` environment variable and build
-with the vcpkg preset; the manifest installs glfw3, glew, glm and
+with the vcpkg preset. The manifest installs glfw3, glew, glm and
 tinyobjloader:
 
 ```
@@ -134,7 +134,7 @@ Installing OpenCV through vcpkg builds it and its dependency chain from
 source, which takes a long time. The faster route on Windows is the
 official prebuilt release: download `opencv-<version>-windows.exe` from
 the [OpenCV releases](https://github.com/opencv/opencv/releases) page
-and run it; the file is a self-extracting archive that asks for a
+and run it. The file is a self-extracting archive that asks for a
 destination folder. Then point the build at the unpacked tree:
 
 ```
@@ -168,7 +168,7 @@ sudo apt install libassimp-dev libopencv-dev
 brew install cmake glfw glew glm
 ```
 
-Homebrew has no tinyobjloader formula; the fallback covers it.
+Homebrew has no tinyobjloader formula, so the fallback covers it.
 
 For the optional Assimp and OpenCV:
 
@@ -218,7 +218,7 @@ the commented block in `CMakeLists.txt` shows how to keep only the
 formats you need.
 
 OpenCV is the one dependency without a download fallback, so it has to
-be installed first; the commands for every system are in
+be installed first. The commands for every system are in
 [Dependencies](#dependencies). When the installed OpenCV is a shared
 library, the template copies its DLL next to the executable on Windows
 automatically.
@@ -270,7 +270,7 @@ vcpkg.json
   the demo requests X11 (XWayland) at startup. If you remove that hint for
   native Wayland, use an EGL-built GLEW.
 - The first configure downloads the missing dependencies into
-  `build/_deps`; later configures reuse them.
+  `build/_deps` and later configures reuse them.
 
 ## License
 
